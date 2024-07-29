@@ -1,5 +1,6 @@
 package spring.curso.screenmatch.principal;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import spring.curso.screenmatch.model.DadosEpisodios;
 import spring.curso.screenmatch.model.DadosSerie;
 import spring.curso.screenmatch.model.DadosTemporada;
@@ -19,23 +20,25 @@ public class Principal {
     private Scanner leitor = new Scanner(System.in);
     private ConsumoApi consumoApi = new ConsumoApi();
     private ConverteDados conversor = new ConverteDados();
+    Dotenv dotenv = Dotenv.load();
     private final String URL = "https://www.omdbapi.com/?t=";
-    private final String API_KEY = "&apikey=f23c5cfe&";
+    String apiKey = dotenv.get("API_KEY");
+    private final String API_KEY_URL = "&apikey="+apiKey;
 
     public void exibeMenu(){
         System.out.println("Digite o nome da série para busca: ");
         var nomeSerie = leitor.nextLine();
-        var json = consumoApi.obterDados(URL + nomeSerie.replace(" ", "+") + API_KEY);
+        var json = consumoApi.obterDados(URL + nomeSerie.replace(" ", "+") + API_KEY_URL);
         DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
         System.out.println(dados);
 
         List<DadosTemporada> temporadas = new ArrayList<>();
-		for (int i = 1; i < dados.totalTemporadas(); i++) {
-			json = consumoApi.obterDados(URL + nomeSerie.replace(" ", "+") + "&season="+ i + API_KEY);
-			DadosTemporada dadosTemporadas = conversor.obterDados(json, DadosTemporada.class);
-			temporadas.add(dadosTemporadas);
-		}
-		temporadas.forEach(System.out::println);
+        for (int i = 1; i < dados.totalTemporadas(); i++) {
+            json = consumoApi.obterDados(URL + nomeSerie.replace(" ", "+") + "&season="+ i + API_KEY_URL);
+            DadosTemporada dadosTemporadas = conversor.obterDados(json, DadosTemporada.class);
+            temporadas.add(dadosTemporadas);
+        }
+        temporadas.forEach(System.out::println);
 
         temporadas.forEach(t ->  t.episodios().forEach(e -> System.out.println(e.titulo())));
 
