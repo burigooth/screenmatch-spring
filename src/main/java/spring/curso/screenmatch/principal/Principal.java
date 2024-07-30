@@ -30,7 +30,7 @@ public class Principal {
         System.out.println(dados);
 
         List<DadosTemporada> temporadas = new ArrayList<>();
-        for (int i = 1; i < dados.totalTemporadas(); i++) {
+        for (int i = 1; i < dados.totalTemporadas() + 1; i++) {
             json = consumoApi.obterDados(URL + nomeSerie.replace(" ", "+") + "&season="+ i + API_KEY_URL);
             DadosTemporada dadosTemporadas = conversor.obterDados(json, DadosTemporada.class);
             temporadas.add(dadosTemporadas);
@@ -73,9 +73,7 @@ public class Principal {
         System.out.println("A partir de que ano você deseja ver os episódios? ");
         var ano = leitor.nextInt();
         leitor.nextLine();
-
         LocalDate dataBusca = LocalDate.of(ano, 1, 1);
-
         DateTimeFormatter formatadorData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         episodios.stream()
                 .filter(e -> e .getDataDeLancamento() != null && e.getDataDeLancamento().isAfter(dataBusca))
@@ -84,5 +82,19 @@ public class Principal {
                                 " Episódio: " + e.getTitulo() +
                                 " Data de lançamento: " + e.getDataDeLancamento().format(formatadorData)
                 ));
+
+        Map<Integer, Double> avaliacaoPorTemporada = episodios.stream()
+                .filter(e -> e.getAvaliacao() > 0.0)
+                .collect(Collectors.groupingBy(Episodio::getTemporada,
+                        Collectors.averagingDouble(Episodio::getAvaliacao)));
+        System.out.println(avaliacaoPorTemporada);
+
+        DoubleSummaryStatistics est = episodios.stream()
+                .filter(e -> e.getAvaliacao() > 0.0)
+                .collect(Collectors.summarizingDouble(Episodio::getAvaliacao));
+        System.out.println("Média: "+ est.getAverage());
+        System.out.println("Melhor episódio: "+ est.getMax());
+        System.out.println("Pior episódio: "+ est.getMin());
+        System.out.println("Quantidade de episódios avaliados: "+est.getCount());
     }
 }
