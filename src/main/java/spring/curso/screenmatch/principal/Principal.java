@@ -1,9 +1,11 @@
 package spring.curso.screenmatch.principal;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
 import spring.curso.screenmatch.model.DadosSerie;
 import spring.curso.screenmatch.model.DadosTemporada;
 import spring.curso.screenmatch.model.Serie;
+import spring.curso.screenmatch.repository.SerieRepository;
 import spring.curso.screenmatch.service.ConsumoApi;
 import spring.curso.screenmatch.service.ConverteDados;
 
@@ -22,6 +24,12 @@ public class Principal {
     String apiKey = dotenv.get("API_KEY");
     private final String API_KEY_URL = "&apikey="+apiKey;
     private List<DadosSerie> dadosSeries = new ArrayList<>();
+
+    private SerieRepository repositorio;
+
+    public Principal(SerieRepository repositorio) {
+        this.repositorio = repositorio;
+    }
 
     public void exibeMenu() {
         var opcao = -1;
@@ -57,7 +65,9 @@ public class Principal {
     }
     private void buscarSerieWeb() {
         DadosSerie dados = getDadosSerie();
-        dadosSeries.add(dados);
+        Serie serie = new Serie(dados);
+        //dadosSeries.add(dados);
+        repositorio.save(serie);
         System.out.println(dados);
     }
 

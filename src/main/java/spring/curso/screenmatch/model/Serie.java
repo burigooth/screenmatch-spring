@@ -1,17 +1,31 @@
 package spring.curso.screenmatch.model;
 
+import jakarta.persistence.*;
 import spring.curso.screenmatch.service.traducao.ConsultaMyMemory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.OptionalDouble;
 
+@Entity
+@Table(name = "series")
 public class Serie {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Gera o id automaticamente pela strategy
+    private Long id;
+
+    @Column(unique = true)
     private String titulo;
     private Integer totalTemporadas;
     private Double avaliacao;
+    @Enumerated(EnumType.STRING)
     private Categoria genero;
     private String sinopse;
     private String atores;
     private String poster;
+
+    @Transient
+    private List<Episodio> episodios = new ArrayList<>();
 
     public Serie(DadosSerie dadosSerie){
         this.titulo = dadosSerie.titulo();
@@ -21,6 +35,22 @@ public class Serie {
         this.sinopse = ConsultaMyMemory.obterTraducao(dadosSerie.sinopse()).trim(); // Traduz a sinopse com a API MyMemory
         this.atores = dadosSerie.atores();
         this.poster = dadosSerie.poster();
+    }
+
+    public List<Episodio> getEpisodios() {
+        return episodios;
+    }
+
+    public void setEpisodios(List<Episodio> episodios) {
+        this.episodios = episodios;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitulo() {
