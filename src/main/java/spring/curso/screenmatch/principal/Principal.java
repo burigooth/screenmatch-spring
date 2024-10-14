@@ -3,12 +3,15 @@ package spring.curso.screenmatch.principal;
 import io.github.cdimascio.dotenv.Dotenv;
 import spring.curso.screenmatch.model.DadosSerie;
 import spring.curso.screenmatch.model.DadosTemporada;
+import spring.curso.screenmatch.model.Serie;
 import spring.curso.screenmatch.service.ConsumoApi;
 import spring.curso.screenmatch.service.ConverteDados;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Principal {
     private Scanner leitor = new Scanner(System.in);
@@ -79,6 +82,13 @@ public class Principal {
     }
 
     private void listarSeriesBuscadas() {
-        dadosSeries.forEach(System.out::println);
+        List<Serie> listarSerie = new ArrayList<>();
+        listarSerie = dadosSeries.stream()
+                        .map(d -> new Serie(d))
+                                .collect(Collectors.toList());
+
+        listarSerie.stream()
+                .sorted(Comparator.comparing(Serie::getGenero))
+                .forEach(System.out::println);
     }
 }
