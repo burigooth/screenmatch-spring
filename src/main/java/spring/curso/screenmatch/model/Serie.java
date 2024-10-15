@@ -24,7 +24,7 @@ public class Serie {
     private String atores;
     private String poster;
 
-    @Transient
+    @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // Eager para carregar os episódios junto com a série
     private List<Episodio> episodios = new ArrayList<>();
 
     public Serie() {} // Construtor vazio para o JPA
@@ -44,6 +44,7 @@ public class Serie {
     }
 
     public void setEpisodios(List<Episodio> episodios) {
+        episodios.forEach(e -> e.setSerie(this)); // Define a série para cada episódio
         this.episodios = episodios;
     }
 
@@ -121,6 +122,7 @@ public class Serie {
                 ", sinopse='" + sinopse + '\'' +
                 ", atores='" + atores + '\'' +
                 ", poster='" + poster + '\'' +
+                ", episodios='" + episodios + '\'' +
                 '}';
     }
 }
