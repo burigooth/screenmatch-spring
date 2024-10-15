@@ -12,4 +12,5 @@ public interface SerieRepository extends JpaRepository<Serie, Long> { // Primeir
     List<Serie> findByAtoresContainingIgnoreCase(String ator);
     List<Serie> findTop5ByOrderByAvaliacaoDesc();
     List<Serie> findByGenero(Categoria categoria);
+    List<Serie> findByTotalTemporadasLessThanEqualAndAvaliacaoGreaterThanEqual(Integer temporadas, Double avaliacao);
 }

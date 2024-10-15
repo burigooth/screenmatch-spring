@@ -1,7 +1,6 @@
 package spring.curso.screenmatch.principal;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import org.springframework.beans.factory.annotation.Autowired;
 import spring.curso.screenmatch.model.*;
 import spring.curso.screenmatch.repository.SerieRepository;
 import spring.curso.screenmatch.service.ConsumoApi;
@@ -37,6 +36,7 @@ public class Principal {
                     5 - Buscar série por ator
                     6 - Top 5 séries
                     7 - Buscar séries por categoria
+                    8 - Busca por temporadas e avaliação
             
                     0 - Sair
                     """;
@@ -65,6 +65,9 @@ public class Principal {
                     break;
                 case 7:
                     buscarSeriesPorCategoria();
+                    break;
+                case 8:
+                    buscaPorTemporadaEAvaliacao();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -161,4 +164,15 @@ public class Principal {
         System.out.println("Séries da categoria " + nomeGenero + ": ");
         seriesPorCategoria.forEach(s -> System.out.println(s.getTitulo() + " - " + s.getGenero()));
     }
+
+    private void buscaPorTemporadaEAvaliacao(){
+        System.out.println("Digite o número de temporadas: ");
+        var temporadas = leitor.nextInt();
+        System.out.println("Digite a avaliação mínima: ");
+        var avaliacao = leitor.nextDouble();
+        List <Serie> seriesPorTemporadaEAvaliacao = repositorio.findByTotalTemporadasLessThanEqualAndAvaliacaoGreaterThanEqual(temporadas, avaliacao);
+        System.out.println("Séries com " + temporadas + " temporadas e avaliação maior que " + avaliacao + ": ");
+        seriesPorTemporadaEAvaliacao.forEach(s -> System.out.println(s.getTitulo() + " - " + s.getTotalTemporadas() + " - " + s.getAvaliacao()));
+    }
+
 }
