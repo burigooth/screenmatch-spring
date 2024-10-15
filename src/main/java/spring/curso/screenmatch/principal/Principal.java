@@ -2,10 +2,7 @@ package spring.curso.screenmatch.principal;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
-import spring.curso.screenmatch.model.DadosSerie;
-import spring.curso.screenmatch.model.DadosTemporada;
-import spring.curso.screenmatch.model.Episodio;
-import spring.curso.screenmatch.model.Serie;
+import spring.curso.screenmatch.model.*;
 import spring.curso.screenmatch.repository.SerieRepository;
 import spring.curso.screenmatch.service.ConsumoApi;
 import spring.curso.screenmatch.service.ConverteDados;
@@ -37,8 +34,9 @@ public class Principal {
                     2 - Buscar episódios
                     3 - Listar séries buscadas
                     4 - Buscar série por nome
-                    5 - Buscar série por ator]
+                    5 - Buscar série por ator
                     6 - Top 5 séries
+                    7 - Buscar séries por categoria
             
                     0 - Sair
                     """;
@@ -64,6 +62,9 @@ public class Principal {
                     break;
                 case 6:
                     buscarTop5Series();
+                    break;
+                case 7:
+                    buscarSeriesPorCategoria();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -150,5 +151,14 @@ public class Principal {
     private void buscarTop5Series(){
         List <Serie> top5 = repositorio.findTop5ByOrderByAvaliacaoDesc();
         top5.forEach(s -> System.out.println(s.getTitulo() + " - " + s.getAvaliacao()));
+    }
+
+    private void buscarSeriesPorCategoria(){
+        System.out.println("Digite o nome de uma categoria para buscar a série: ");
+        var nomeGenero = leitor.nextLine();
+        Categoria categoria = Categoria.fromPortugues(nomeGenero);
+        List <Serie> seriesPorCategoria = repositorio.findByGenero(categoria);
+        System.out.println("Séries da categoria " + nomeGenero + ": ");
+        seriesPorCategoria.forEach(s -> System.out.println(s.getTitulo() + " - " + s.getGenero()));
     }
 }
