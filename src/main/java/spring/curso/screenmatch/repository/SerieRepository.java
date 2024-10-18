@@ -15,6 +15,7 @@ public interface SerieRepository extends JpaRepository<Serie, Long> { // Primeir
     List<Serie> findTop5ByOrderByAvaliacaoDesc();
     List<Serie> findByGenero(Categoria categoria);
     List<Serie> findByTotalTemporadasLessThanEqualAndAvaliacaoGreaterThanEqual(Integer temporadas, Double avaliacao); //Trocamos esse método por um método com JPQL
+    List<Serie> findTop5ByOrderByEpisodiosDataDeLancamentoDesc();
 
     //Na query JPQL, a grande vantagem é poder usar o nome da entidade é o nome da classe
     @Query("SELECT s FROM Serie s WHERE s.totalTemporadas <= :totalTemporadas AND s.avaliacao >= :avalicao") // JPQL, :nomeParametro
@@ -28,4 +29,5 @@ public interface SerieRepository extends JpaRepository<Serie, Long> { // Primeir
 
     @Query("SELECT e FROM Serie s JOIN s.episodios e WHERE s = :serie AND YEAR(e.dataDeLancamento) >= :ano ")
     List<Episodio> episodiosPorAno(Serie serie, int ano);
+
 }
