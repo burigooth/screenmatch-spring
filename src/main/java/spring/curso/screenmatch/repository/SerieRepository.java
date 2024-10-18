@@ -2,6 +2,7 @@ package spring.curso.screenmatch.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import spring.curso.screenmatch.dto.EpisodioDTO;
 import spring.curso.screenmatch.model.Categoria;
 import spring.curso.screenmatch.model.Episodio;
 import spring.curso.screenmatch.model.Serie;
@@ -15,10 +16,11 @@ public interface SerieRepository extends JpaRepository<Serie, Long> { // Primeir
     List<Serie> findTop5ByOrderByAvaliacaoDesc();
     List<Serie> findByGenero(Categoria categoria);
     List<Serie> findByTotalTemporadasLessThanEqualAndAvaliacaoGreaterThanEqual(Integer temporadas, Double avaliacao); //Trocamos esse método por um método com JPQL
+
     @Query("SELECT s FROM Serie s " +
             "JOIN s.episodios e " +
             "GROUP BY s " +
-            "ORDER BY MAX(e.dataLancamento) DESC LIMIT 5")
+            "ORDER BY MAX(e.dataDeLancamento) DESC LIMIT 5")
     List<Serie> encontrarEpisodiosMaisRecentes();
 
     //Na query JPQL, a grande vantagem é poder usar o nome da entidade é o nome da classe
@@ -34,4 +36,6 @@ public interface SerieRepository extends JpaRepository<Serie, Long> { // Primeir
     @Query("SELECT e FROM Serie s JOIN s.episodios e WHERE s = :serie AND YEAR(e.dataDeLancamento) >= :ano ")
     List<Episodio> episodiosPorAno(Serie serie, int ano);
 
+    @Query("SELECT e FROM Serie s JOIN s.episodios e WHERE s.id = :id AND e.temporada = :numero")
+    List<Episodio> episodiosPorTemporada(Long id, Long numero);
 }
